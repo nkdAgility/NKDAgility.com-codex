@@ -1,0 +1,83 @@
+{{ $breadcrumbs := partial "functions/breadcrumbs.html" . }}
+<nav aria-label="breadcrumb" nkdMeta="[Kind:={{- .Kind }}][Type:={{- .Type }}]">
+  <ul class="breadcrumb">
+    <!-- Output breadcrumb trail -->
+    {{- range $index, $page := $breadcrumbs }}
+      <li class="breadcrumb-item" title="{{- $page.Title }}{{ if $page.Params.shorttitle }}&nbsp;({{ $page.Params.shorttitle }}){{ end }}{{ if $page.Description }}&nbsp;-&nbsp;{{ $page.Description }}{{ end }}">
+        {{- if eq $index (sub (len $breadcrumbs) 1) }}
+          <!-- Current page (no link) -->
+          <span class="active">
+            {{- if $page.Params.shorttitle }}
+              {{- $page.Params.shorttitle }}
+            {{- else }}
+              {{- $page.Title }}
+            {{- end }}
+          </span>
+        {{- else }}
+          {{ if $page.IsHome }}
+            <a href="{{- $page.Permalink }}"><i class="fa-light fa-house"></i></a>
+          {{ else }}
+            <!-- Linked breadcrumb items -->
+            <a href="{{- $page.Permalink }}">
+              {{- if $page.Params.shorttitle }}
+                {{- $page.Params.shorttitle }}
+              {{- else }}
+                {{- $page.Title }}
+              {{- end }}
+            </a>
+          {{- end }}
+        {{- end }}
+      </li>
+    {{- end }}
+  </ul>
+</nav>
+{{- if ne hugo.Environment "production" }}
+  <button class="btn btn-outline-info" title="Click to copy" onclick="navigator.clipboard.writeText('{{ .Path }}');" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">{{ .Path }} <i class="fa-regular fa-clipboard"></i></button>
+{{ end }}
+
+
+<style>
+  .breadcrumb {
+    list-style: none;
+    display: flex;
+    justify-content: left; /* Centers the breadcrumb items horizontally */
+    padding: 0;
+    margin: 0;
+    font-size: smaller;
+  }
+
+  .breadcrumb-item {
+    margin-right: 10px;
+  }
+
+  .breadcrumb-item::after {
+    content: ">";
+    margin-left: 10px;
+  }
+
+  .breadcrumb-item:last-child {
+    /* display: none;  Hide the last breadcrumb item */
+  }
+
+  .breadcrumb-item:nth-last-child(2)::after {
+    /* content: none; Remove the arrow after the second-to-last item */
+  }
+
+  .breadcrumb-item:nth-last-child(1)::after {
+    content: none; /* Remove the arrow after the second-to-last item */
+  }
+
+  .breadcrumb-item a {
+    text-decoration: none;
+    color: #3498db;
+  }
+
+  .breadcrumb-item.active {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: none !important; /* Removes the default slash separator */
+  }
+</style>
